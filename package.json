@@ -2,7 +2,7 @@
   "name": "inmobiliaria-backend",
   "version": "1.0.0",
   "description": "Backend para sistema de publicaciones inmobiliarias",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "server": "nodemon backend/server.js",
     "start": "node backend/server.js"
