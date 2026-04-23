@@ -1,14 +1,14 @@
 const asyncHandler = require('express-async-handler');
 const Publicacion = require('../models/publicacionModel');
 
-// @desc    Obtener todas las publicaciones
+// Obtener publicación
 const getPublicaciones = asyncHandler(async (req, res) => {
     const publicaciones = await Publicacion.find().sort({ createdAt: -1 });
     res.status(200).json(publicaciones);
 });
 
-// @desc    Crear una publicación
-const setPublicacion = asyncHandler(async (req, res) => {
+// Crear publicación
+const addPublicacion = asyncHandler(async (req, res) => {
     let urls = [];
     if (req.files) {
         urls = req.files.map(file => file.path);
@@ -20,7 +20,7 @@ const setPublicacion = asyncHandler(async (req, res) => {
     res.status(201).json(nuevaPublicacion);
 });
 
-// @desc    Actualizar una publicación
+// Actualizar publicación
 const updatePublicacion = asyncHandler(async (req, res) => {
     let datosAActualizar = { ...req.body };
     
@@ -42,31 +42,31 @@ const updatePublicacion = asyncHandler(async (req, res) => {
 });
 
 const cloudinary = require('cloudinary').v2;
-// @desc    Eliminar una publicación
+// Eliminar una publicación
 const deletePublicacion = asyncHandler(async (req, res) => {
     const publicacion = await Publicacion.findById(req.params.id);
     if (!publicacion) {
         res.status(404);
         throw new Error('Publicación no encontrada');
     }
-    // 1. Borrar las imágenes de Cloudinary
+    // Borrar las imágenes de Cloudinary
     if (publicacion.multimedia && publicacion.multimedia.length > 0) {
         for (const url of publicacion.multimedia) {
-            // Este truco extrae el public_id de la URL de Cloudinary
+            // Extrae el public_id de la URL de Cloudinary
             const nombreArchivo = url.split('/').pop().split('.')[0]; 
-            const publicId = `publicaciones_app/${nombreArchivo}`; // 'publicaciones_app' es el folder que definimos antes
+            const publicId = `publicaciones_app/${nombreArchivo}`;
             
             await cloudinary.uploader.destroy(publicId);
         }
     }
-    // 2. Borrar de MongoDB
+    // Borrar de MongoDB
     await publicacion.deleteOne();
     res.status(200).json({ message: 'Eliminado', id: req.params.id });
 });
 
 module.exports = {
     getPublicaciones,
-    setPublicacion,
+    addPublicacion,
     updatePublicacion,
     deletePublicacion
 };

@@ -50,7 +50,7 @@ const updateUser = asyncHandler(async (req, res) => {
     const userUpdated = await User.findByIdAndUpdate(
         req.params.id, 
         req.body, 
-        { new: true, runValidators: true } // new: true devuelve el usuario ya cambiado
+        { new: true, runValidators: true } 
     )
 
     res.status(200).json(userUpdated)

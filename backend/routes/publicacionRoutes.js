@@ -3,16 +3,14 @@ const router = express.Router();
 const upload = require('../config/cloudinary');
 const { 
     getPublicaciones, 
-    setPublicacion, 
+    addPublicacion, 
     updatePublicacion, 
     deletePublicacion 
 } = require('../controllers/publicacionControllers');
 
-// Rutas para /api/publicaciones
 router.get('/', getPublicaciones);
-router.post('/', upload.array('multimedia', 50), setPublicacion);
+router.post('/', upload.array('multimedia', 50), addPublicacion);
 
-// Rutas para /api/publicaciones/:id
 router.put('/:id', upload.array('multimedia', 50), updatePublicacion);
 router.delete('/:id', deletePublicacion);
 

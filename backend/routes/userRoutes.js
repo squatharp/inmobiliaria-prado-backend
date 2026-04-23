@@ -3,15 +3,16 @@ const router = express.Router()
 
 const{ getUsers, addUsers, deleteUser, updateUser} = require('../controllers/userControllers')
 
-//obtener movimientos
+//obtener users
 router.get('/', getUsers)
 
-//agregar movimientos
+//agregar users
 router.post('/', addUsers)
 
-//borrar movimientos
+//borrar users
 router.delete('/:id', deleteUser)
 
+//actualizar users
 router.put('/:id', updateUser)
 
 module.exports = router

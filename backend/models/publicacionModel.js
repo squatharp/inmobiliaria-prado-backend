@@ -17,7 +17,7 @@ const publicacionSchema = mongoose.Schema({
         trim: true
     },
     multimedia: {
-        type: [String], // Aquí se guardarán las URLs de Cloudinary
+        type: [String], //URLs de Cloudinary
         validate: {
             validator: function(v) {
                 return v.length <= 50;
