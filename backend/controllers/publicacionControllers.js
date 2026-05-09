@@ -64,9 +64,21 @@ const deletePublicacion = asyncHandler(async (req, res) => {
     res.status(200).json({ message: 'Eliminado', id: req.params.id });
 });
 
+const getPublicacionById = asyncHandler(async (req, res) => {
+    const publicacion = await Publicacion.findById(req.params.id)
+
+    if (publicacion) {
+        res.json(publicacion)
+    } else {
+        res.status(404)
+        throw new Error('Propiedad no encontrada')
+    }
+})
+
 module.exports = {
     getPublicaciones,
     addPublicacion,
     updatePublicacion,
-    deletePublicacion
+    deletePublicacion,
+    getPublicacionById
 };

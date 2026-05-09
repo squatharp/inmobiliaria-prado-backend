@@ -6,7 +6,8 @@ const {
     getPublicaciones, 
     addPublicacion, 
     updatePublicacion, 
-    deletePublicacion 
+    deletePublicacion ,
+    getPublicacionById
 } = require('../controllers/publicacionControllers');
 
 // Ruta pública: Cualquiera puede ver las casas
@@ -19,5 +20,7 @@ router.post('/', protect, upload.array('multimedia', 50), addPublicacion);
 router.put('/:id', protect, upload.array('multimedia', 50), updatePublicacion);
 
 router.delete('/:id', protect, deletePublicacion);
+
+router.get('/:id', getPublicacionById); 
 
 module.exports = router;
