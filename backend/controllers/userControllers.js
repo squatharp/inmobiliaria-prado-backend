@@ -9,81 +9,56 @@ const getUsers = asyncHandler(async (req, res) => {
 })
 
 const addUsers = asyncHandler(async (req, res) => {
-    if(!req.body.nombre){
+    const { nombre, email, contrasena } = req.body
+
+    if (!nombre || !email || !contrasena) {
         res.status(400)
-        throw new Error("Teclea el nombre del usuario")
-    }
-    if(!req.body.email){
-        res.status(400)
-        throw new Error("Teclea el email")
-    }
-    if(!req.body.contrasena){
-        res.status(400)
-        throw new Error("Teclea la contraseña")
-    }
-    if(!req.body.contrasena){
-        res.status(400)
-        throw new Error("Teclea la contraseña")
+        throw new Error("Por favor teclea todos los campos")
     }
 
+    // Verificar si el usuario ya existe
+    const userExists = await User.findOne({ email })
+    if (userExists) {
+        res.status(400)
+        throw new Error('Ese usuario ya existe')
+    }
+
+    // Encriptar contraseña
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(contrasena, salt)
 
     const user = await User.create({
-        nombre: req.body.nombre,
-        email: req.body.email,
-        contrasena: req.body.contrasena
+        nombre,
+        email,
+        contrasena: hashedPassword
     })
 
-    if (user){
-        res.status(201).json(user)
-    } else{
-        res.status(500)
-        throw new Error("Hubo un error")
-    }
-})
-
-const updateUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.params.id)
-
-    if (!user) {
-        res.status(404)
-        throw new Error("Usuario no encontrado")
-    }
-
-    const userUpdated = await User.findByIdAndUpdate(
-        req.params.id, 
-        req.body, 
-        { new: true, runValidators: true } 
-    )
-
-    res.status(200).json(userUpdated)
-})
-
-const deleteUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.params.id)
-
-    if(!user){
-        res.status(404)
-        throw new Error("Usuario no encontrado")
+    if (user) {
+        res.status(201).json({
+            _id: user.id,
+            nombre: user.nombre,
+            email: user.email,
+            token: generateToken(user._id)
+        })
     } else {
-        await User.deleteOne(user)
-        res.status(200).json({"Mensaje":"Usuario Eliminado"})
+        res.status(400)
+        throw new Error("Datos de usuario inválidos")
     }
 })
 
 const loginUser = asyncHandler(async (req, res) => {
-    const { email, password } = req.body // O 'contrasena' según tu modelo
+    const { email, password } = req.body 
 
-    // 1. Buscar al usuario por email
-    const user = await Usuario.findOne({ email })
+    // CORRECCIÓN: Usar 'User' que es como lo importaste arriba
+    const user = await User.findOne({ email })
 
-    // 2. Comparar la contraseña ingresada con la encriptada en la DB
-    // Nota: Si en tu modelo usas 'contrasena', cámbialo aquí
+    // Comparamos password (del body) con user.contrasena (de la DB)
     if (user && (await bcrypt.compare(password, user.contrasena))) {
         res.status(200).json({
             _id: user.id,
             nombre: user.nombre,
             email: user.email,
-            token: generateToken(user._id) // Generamos el token de acceso
+            token: generateToken(user._id)
         })
     } else {
         res.status(401)
@@ -91,18 +66,36 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 })
 
-// Función para generar el JWT
+const updateUser = asyncHandler(async (req, res) => {
+    const userUpdated = await User.findByIdAndUpdate(
+        req.params.id, 
+        req.body, 
+        { new: true, runValidators: true } 
+    )
+    res.status(200).json(userUpdated)
+})
+
+const deleteUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id)
+    if(!user){
+        res.status(404)
+        throw new Error("Usuario no encontrado")
+    }
+    await User.deleteOne({ _id: req.params.id })
+    res.status(200).json({ id: req.params.id, mensaje: "Usuario Eliminado" })
+})
+
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d' // El token expira en 30 días
+        expiresIn: '30d'
     })
 }
 
+// CORRECCIÓN: Solo un module.exports al final
 module.exports = {
-    // ... tus otras funciones (register, etc)
+    getUsers, 
+    addUsers, 
+    deleteUser, 
+    updateUser, 
     loginUser
-}
-
-module.exports = {
-    getUsers, addUsers, deleteUser, updateUser, loginUser
 }
