@@ -2,7 +2,6 @@ const asyncHandler = require("express-async-handler")
 const User = require("../models/userModel")
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const asyncHandler = require('express-async-handler')
 
 const getUsers = asyncHandler(async (req, res) => {
     const users = await User.find({})
