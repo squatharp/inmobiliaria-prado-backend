@@ -10,8 +10,11 @@ connectDB()
 
 const app = express()
 
-
-app.use(cors())
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'https://tu-frontend.vercel.app'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 app.use(express.json())
 app.use('/api/publicaciones', require('./routes/publicacionRoutes'))
 app.use('/api/usuarios', require('./routes/userRoutes'))
