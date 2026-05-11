@@ -53,12 +53,12 @@ const publicacionSchema = mongoose.Schema({
         min: [0, "No puedes tener un número negativo de recámaras"],
         default: 0
     },
-    baños: {
+    banos: {
         type: Number,
         min: [0, "No puedes tener un número negativo de baños"],
         default: 0
     },
-    mediosBaños: {
+    mediosBanos: {
         type: Number,
         min: [0, "No puedes tener un número negativo de medios baños"],
         default: 0
