@@ -11,9 +11,9 @@ connectDB()
 const app = express()
 
 app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
+    origin: '*', // Permite todo temporalmente
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json())
 app.use('/api/publicaciones', require('./routes/publicacionRoutes'))
